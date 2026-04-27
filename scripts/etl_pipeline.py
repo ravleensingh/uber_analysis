@@ -76,8 +76,8 @@ def fix_dtypes(df: pd.DataFrame) -> pd.DataFrame:
     """
     result = df.copy()
 
-    result["pickup_time"] = pd.to_datetime(result["pickup_time"])
-    result["drop_time"] = pd.to_datetime(result["drop_time"])
+    result["pickup_time"] = pd.to_datetime(result["pickup_time"]).dt.round("s")
+    result["drop_time"] = pd.to_datetime(result["drop_time"]).dt.round("s")
 
     for col in ["city", "status", "payment_method"]:
         result[col] = result[col].astype("category")
