@@ -20,7 +20,7 @@ Ride-hailing platforms generate large volumes of transactional data that, when a
 
 | Attribute | Details |
 |---|---|
-| Source | Kaggle (raw transactional trip records) |
+| Source | [Kaggle (raw transactional trip records)](https://www.kaggle.com/datasets/rohiteng/uber-trips-dataset?select=uber_trips_dataset_50k.csv) |
 | Raw file | `data/raw/uber_trips_dataset_50k.csv` |
 | Row count | 50,000 (raw) / 49,997 (cleaned) |
 | Column count | 14 (raw) / 23 (cleaned) / 31 (Tableau-ready) |
@@ -61,28 +61,28 @@ Screenshots stored in [`tableau/screenshots/`](tableau/screenshots/).
 
 ## Key Insights
 
-To be completed after EDA and statistical analysis notebooks are executed.
+Based on the completed Exploratory Data Analysis and Statistical Analysis:
 
-1. --
-2. --
-3. --
-4. --
-5. --
-6. --
-7. --
-8. --
+1. **Service Reliability:** Completed trips dominate the dataset, but a significant volume of cancellations and no-shows presents a critical area for improving service reliability.
+2. **Balanced Demand:** Trip volume is distributed evenly across all six cities (San Francisco, New York, Chicago, Boston, Seattle, Los Angeles), indicating a well-balanced operational footprint.
+3. **Payment Preferences:** Payment methods (Cash, Card, UPI, Wallet) are split nearly equally, showing diverse user preference and no single dominant payment channel.
+4. **Pricing Consistency:** Fare amounts and trip distances have a strong positive correlation, confirming that the distance-driven pricing model functions consistently across regions.
+5. **Weekend Surges:** Fares on weekends are statistically significantly higher than on weekdays, demonstrating successful peak/surge pricing implementation.
+6. **Commute Dynamics:** Trip duration differs significantly between morning and evening, suggesting heavier traffic patterns during the evening commute.
+7. **Localized Efficiency:** Pricing efficiency (Fare per Kilometre) varies significantly by city, suggesting localized pricing dynamics or differing operational costs.
+8. **Revenue Concentration:** A Pareto analysis confirms that certain top-performing cities generate a disproportionate amount of revenue, highlighting key areas for operational focus.
 
 ---
 
 ## Recommendations
 
-To be completed after analysis.
+Based on the key insights derived from the dataset analysis:
 
 | # | Insight | Recommendation | Expected Impact |
 |---|---|---|---|
-| 1 | -- | -- | -- |
-| 2 | -- | -- | -- |
-| 3 | -- | -- | -- |
+| 1 | Significant cancellation rates limit completion volume | Implement targeted cancellation disincentives and optimize routing during peak times | Reduce cancellation rates, directly increasing completed trips and overall revenue |
+| 2 | Weekend fares are significantly higher and more lucrative | Proactively optimize driver supply allocation ahead of anticipated weekend surges | Ensure adequate driver supply to capture high-value weekend demand without causing excessive wait times |
+| 3 | Pricing efficiency (Fare per KM) varies significantly by city | Conduct localized pricing reviews to standardize margins and ensure regional competitiveness | Improve pricing efficiency and margin consistency across the entire city network |
 
 ---
 
