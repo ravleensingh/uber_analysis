@@ -7,8 +7,8 @@ and exports the processed dataset.
 
 Usage:
     python scripts/etl_pipeline.py \
-        --input data/raw/uber_trips_dataset_50k.csv \
-        --output data/processed/uber_trips_cleaned.csv
+        --input data/raw/uber_raw_dataset.csv \
+        --output data/processed/uber_cleaned_dataset.csv
 
 Project: Uber Data Visualization and Analysis
 """
@@ -16,7 +16,6 @@ Project: Uber Data Visualization and Analysis
 from __future__ import annotations
 
 import argparse
-import sys
 from pathlib import Path
 
 import numpy as np
@@ -91,7 +90,7 @@ def fix_dtypes(df: pd.DataFrame) -> pd.DataFrame:
 # ---------------------------------------------------------------------------
 
 def standardize_text(df: pd.DataFrame) -> pd.DataFrame:
-    """Strip whitespace and apply title case to categorical text columns.
+    """Strip whitespace and normalize categorical text columns.
 
     Parameters
     ----------
@@ -107,7 +106,19 @@ def standardize_text(df: pd.DataFrame) -> pd.DataFrame:
     text_cols = ["city", "status", "payment_method"]
 
     for col in text_cols:
-        result[col] = result[col].str.strip().str.title().astype("category")
+        cleaned = result[col].astype(str).str.strip()
+        if col == "payment_method":
+            cleaned = cleaned.str.upper().replace(
+                {
+                    "CASH": "Cash",
+                    "CARD": "Card",
+                    "UPI": "UPI",
+                    "WALLET": "Wallet",
+                }
+            )
+        else:
+            cleaned = cleaned.str.title()
+        result[col] = cleaned.astype("category")
 
     print("[TEXT] Standardized text columns: stripped whitespace, applied title case.")
     return result
@@ -325,13 +336,13 @@ def parse_args() -> argparse.Namespace:
         "--input",
         required=True,
         type=Path,
-        help="Path to the raw CSV file (e.g., data/raw/uber_trips_dataset_50k.csv).",
+        help="Path to the raw CSV file (e.g., data/raw/uber_raw_dataset.csv).",
     )
     parser.add_argument(
         "--output",
         required=True,
         type=Path,
-        help="Path for the cleaned CSV (e.g., data/processed/uber_trips_cleaned.csv).",
+        help="Path for the cleaned CSV (e.g., data/processed/uber_cleaned_dataset.csv).",
     )
     return parser.parse_args()
 

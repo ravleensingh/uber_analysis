@@ -1,68 +1,105 @@
-# Data Dictionary -- Uber Trips Dataset
+# Data Dictionary - Uber Trips Project
 
-This document provides a complete reference for every column in the Uber trips dataset, covering both the original raw fields and the derived columns created during the cleaning pipeline.
-
----
+This document defines the raw fields, cleaned analytical fields, and final Tableau-ready fields used in `Uber_Analysis`.
 
 ## Dataset Summary
 
 | Item | Details |
 |---|---|
-| Dataset name | Uber Trips Dataset (50K) |
-| Source | Kaggle (raw transactional trip records) |
-| Raw file name | `uber_trips_dataset_50k.csv` |
-| Cleaned file name | `uber_trips_cleaned.csv` |
-| Granularity | One row per trip |
-| Time period | January 2023 (full month) |
-| Raw row count | 50,000 |
-| Clean row count | 49,997 |
-| Raw column count | 14 |
-| Final column count | 23 (14 original + 9 derived) |
+| Raw dataset | `data/raw/uber_raw_dataset.csv` |
+| Cleaned dataset | `data/processed/uber_cleaned_dataset.csv` |
+| Tableau-ready dataset | `data/processed/tableau_ready_dataset.csv` |
+| Grain | One row per trip |
+| Date coverage | 2023-01-01 00:00:00 to 2023-02-04 17:19:00 |
+| Unique pickup dates | 35 |
+| Raw rows / columns | 50,000 / 14 |
+| Cleaned rows / columns | 49,997 / 23 |
+| Tableau-ready rows / columns | 49,997 / 17 |
+| Cities | Boston, Chicago, Los Angeles, New York, San Francisco, Seattle |
+| Dataset authenticity | Synthetic sample trip data |
+| Dashboard limitation | Coordinates are synthetic and excluded from Tableau |
 
----
+## Raw Columns
 
-## Original Columns (from raw dataset)
+| Column | Type | Description | Example | Notes |
+|---|---|---|---|---|
+| `trip_id` | int | Unique trip identifier | `1` | Primary counting field for trip-level KPIs |
+| `driver_id` | int | Driver identifier | `8270` | Used for active-driver counts |
+| `rider_id` | int | Rider identifier | `10683` | Used for rider counts |
+| `city` | string | Trip origin city | `San Francisco` | Standardized during cleaning |
+| `pickup_lat` | float | Pickup latitude | `37.1709` | Retained in cleaned data only |
+| `pickup_lng` | float | Pickup longitude | `-77.5865` | Retained in cleaned data only |
+| `drop_lat` | float | Drop latitude | `37.1737` | Retained in cleaned data only |
+| `drop_lng` | float | Drop longitude | `-77.6199` | Retained in cleaned data only |
+| `distance_km` | float | Trip distance in kilometres | `2.97` | Core demand and pricing metric |
+| `fare_amount` | float | Trip fare amount | `10.71` | Core revenue metric |
+| `status` | string | Trip outcome | `Completed` | Values standardized to `Completed`, `Cancelled`, `No-Show` |
+| `payment_method` | string | Rider payment method | `Wallet` | Values standardized to `Cash`, `Card`, `UPI`, `Wallet` |
+| `pickup_time` | string in raw file | Pickup timestamp | `2023-01-01 00:00:00` | Converted to datetime during cleaning |
+| `drop_time` | string in raw file | Drop timestamp | `2023-01-01 00:08:54.600000000` | Converted to datetime during cleaning |
 
-| Column Name | Data Type | Description | Example Value | Used In | Cleaning Notes |
-|---|---|---|---|---|---|
-| `trip_id` | int | Unique identifier for each trip | 1 | Deduplication | No changes required; all values unique |
-| `driver_id` | int | Identifier for the driver assigned to the trip | 8270 | Segmentation | No changes required |
-| `rider_id` | int | Identifier for the rider who requested the trip | 10683 | Segmentation | No changes required |
-| `city` | category | City where the trip originated | San Francisco | EDA, KPI, Tableau filters | Stripped whitespace, applied title case, converted to category dtype |
-| `pickup_lat` | float | Latitude of the pickup location | 37.1709 | Geographic analysis | No changes required |
-| `pickup_lng` | float | Longitude of the pickup location | -77.5865 | Geographic analysis | No changes required |
-| `drop_lat` | float | Latitude of the drop-off location | 37.1737 | Geographic analysis | No changes required |
-| `drop_lng` | float | Longitude of the drop-off location | -77.6199 | Geographic analysis | No changes required |
-| `distance_km` | float | Distance covered during the trip in kilometres | 2.97 | EDA, KPI, Tableau | No changes required; validated no negatives |
-| `fare_amount` | float | Amount charged for the trip (in currency units) | 10.71 | EDA, KPI, Tableau | Validated no negatives |
-| `status` | category | Trip outcome | Completed | EDA, KPI, Tableau filters | Stripped whitespace, applied title case, converted to category dtype. Values: Completed, Cancelled, No-Show |
-| `payment_method` | category | Payment method used by the rider | Wallet | EDA, KPI, Tableau filters | Stripped whitespace, applied title case, converted to category dtype. Values: Cash, Card, Upi, Wallet |
-| `pickup_time` | datetime64 | Timestamp when the trip started | 2023-01-01 00:00:00 | Temporal analysis, feature engineering | Converted from string to datetime64 |
-| `drop_time` | datetime64 | Timestamp when the trip ended | 2023-01-01 00:08:54 | Temporal analysis, feature engineering | Converted from string to datetime64 |
+## Derived Columns in the Cleaned Dataset
 
----
+These 9 fields are added during notebook-based cleaning and feature engineering.
 
-## Derived Columns (created during cleaning)
-
-| Derived Column | Data Type | Logic | Business Meaning |
+| Column | Type | Logic | Business Use |
 |---|---|---|---|
-| `trip_duration_mins` | float | `(drop_time - pickup_time)` converted to minutes, rounded to 2 decimal places | Core metric for service quality and operational efficiency analysis |
-| `pickup_date` | date | Date portion extracted from `pickup_time` | Enables day-level trend analysis and aggregation |
-| `pickup_hour` | int | Hour (0-23) extracted from `pickup_time` | Identifies peak and off-peak demand hours |
-| `pickup_day` | string | Day-of-week name (e.g., Monday) extracted from `pickup_time` | Supports weekday pattern analysis and scheduling decisions |
-| `pickup_month` | string | Month name (e.g., January) extracted from `pickup_time` | Enables monthly trend comparison (single month in this dataset) |
-| `pickup_week` | int | ISO week number extracted from `pickup_time` | Supports weekly aggregation and trend analysis |
-| `time_of_day` | string | Hour bucketed into segments: Night (0-6), Morning (6-12), Afternoon (12-17), Evening (17-21), Night (21-24) | Human-readable time segment for dashboard filters and demand pattern analysis |
-| `fare_per_km` | float | `fare_amount / distance_km` (NaN where distance is zero) | Measures pricing efficiency per trip; useful for identifying pricing anomalies |
-| `is_weekend` | bool | True if the trip fell on Saturday or Sunday | Quick filter for weekend versus weekday demand comparison |
+| `trip_duration_mins` | float | `(drop_time - pickup_time)` in minutes, rounded to 2 decimals | Service-time and operations analysis |
+| `pickup_date` | date | Date extracted from `pickup_time` | Daily trend analysis and filters |
+| `pickup_hour` | int | Hour extracted from `pickup_time` | Hourly demand profiling |
+| `pickup_day` | string | Day name derived from `pickup_time` | Weekday pattern analysis |
+| `pickup_month` | string | Month name derived from `pickup_time` | Retained for analysis completeness |
+| `pickup_week` | int | ISO week number derived from `pickup_time` | Retained for week-level grouping |
+| `time_of_day` | string | Bucketed from `pickup_hour` | User-friendly time segmentation |
+| `fare_per_km` | float | `fare_amount / distance_km` where distance is non-zero | Pricing-efficiency analysis |
+| `is_weekend` | bool | `True` when pickup falls on Saturday or Sunday | Intermediate day-type logic |
 
----
+## Tableau-Specific Derived Fields
+
+These fields are added during final Tableau preparation, not during the original cleaning step.
+
+| Column | Type | Logic | Business Use |
+|---|---|---|---|
+| `day_type` | string | Converts `is_weekend` to readable labels `Weekday` and `Weekend` | Dashboard slicing and weekday-weekend comparison |
+| `fare_tier` | string | Tercile-based segmentation of `fare_amount` using cutoffs near `12.92` and `18.21` | Revenue mix and pricing segmentation |
+
+## Final Tableau-Ready Columns
+
+The Tableau export is intentionally lean and keeps only the columns required for the published dashboard.
+
+| Column | Type in CSV | Description |
+|---|---|---|
+| `trip_id` | int | Trip-level counting field |
+| `driver_id` | int | Active-driver counting field |
+| `rider_id` | int | Active-rider counting field |
+| `city` | string | Primary city segmentation field |
+| `distance_km` | float | Distance metric |
+| `fare_amount` | float | Revenue metric |
+| `status` | string | Service-outcome filter and KPI input |
+| `payment_method` | string | Payment segmentation |
+| `pickup_time` | datetime-like string | Timestamp for continuous time analysis |
+| `pickup_date` | date-like string | Daily trend and date filter field |
+| `pickup_hour` | int | Hour-based drill-down field |
+| `pickup_day` | string | Day-of-week analysis field |
+| `time_of_day` | string | Bucketed time segment used in charts and filters |
+| `trip_duration_mins` | float | Duration KPI |
+| `fare_per_km` | float | Pricing-efficiency KPI |
+| `day_type` | string | Readable weekday-weekend label |
+| `fare_tier` | string | Budget, Standard, and Premium fare segment |
+
+## Columns Excluded from the Tableau Export
+
+| Column | Why It Was Excluded |
+|---|---|
+| `pickup_lat`, `pickup_lng`, `drop_lat`, `drop_lng` | Coordinates are synthetic and not appropriate for mapping |
+| `drop_time` | `trip_duration_mins` already captures the useful operational timing outcome |
+| `pickup_month`, `pickup_week` | Can be derived or are not required for the final dashboard story |
+| `is_weekend` | Replaced by the more readable `day_type` field |
 
 ## Data Quality Notes
 
-- **No missing values** were found in the raw dataset across any column.
-- **No duplicate rows** or duplicate `trip_id` values were found.
-- **3 ghost trips** (zero distance and zero duration with non-zero fare) were identified and removed during cleaning.
-- **GPS coordinates** appear to have some geographic inconsistency (e.g., coordinates for "Boston" may not match actual Boston geography). This is a known limitation of the synthetic dataset and does not affect the analytical value of other columns.
-- **Fare currency** is not explicitly labelled in the raw data. Values are treated as unitless numerical amounts for analysis.
-- **Single-month coverage**: the dataset covers January 2023 only, which limits seasonal or multi-month trend analysis.
+- No missing values were found in the raw dataset.
+- No duplicate rows or duplicate `trip_id` values were found.
+- Three ghost trips with zero distance and zero duration were removed during cleaning.
+- Fare, distance, and duration are internally consistent enough for descriptive analysis and dashboarding.
+- Tableau intentionally excludes the GPS coordinates because the source coordinates are synthetic rather than real trip geography.
