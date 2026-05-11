@@ -7,8 +7,6 @@ This file stores the published Tableau Public links and local dashboard assets f
 | Item | Link | Notes |
 |---|---|---|
 | Main Tableau Public dashboard | [Overview](https://public.tableau.com/app/profile/ravleen.singh4050/viz/Book1_17777857884460/Overview) | Recommended entry page |
-| Dashboard page | [Business Insights](https://public.tableau.com/app/profile/ravleen.singh4050/viz/Book1_17777857884460/BusinessInsights) | Revenue, fare-tier, and rider-focused page |
-| Dashboard page | [Operations](https://public.tableau.com/app/profile/ravleen.singh4050/viz/Book1_17777857884460/Operations) | Service-quality and operational monitoring page |
 
 ## Local Assets
 

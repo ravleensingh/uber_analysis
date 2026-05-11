@@ -6,8 +6,6 @@ This project analyzes Uber trip activity across six U.S. cities to evaluate serv
 
 - Kaggle Dataset: [Uber Trips Dataset - Kaggle](https://www.kaggle.com/datasets/rohiteng/uber-trips-dataset?select=uber_trips_dataset_50k.csv)
 - Tableau Public Dashboard: [Uber Analysis Dashboard - Overview](https://public.tableau.com/app/profile/ravleen.singh4050/viz/Book1_17777857884460/Overview)
-- Tableau Public Dashboard: [Business Insights](https://public.tableau.com/app/profile/ravleen.singh4050/viz/Book1_17777857884460/BusinessInsights)
-- Tableau Public Dashboard: [Operations](https://public.tableau.com/app/profile/ravleen.singh4050/viz/Book1_17777857884460/Operations)
 
 ## Project Snapshot
 
